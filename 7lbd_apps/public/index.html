@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ORC Windows</title>
+    <style>
+        #display {
+            cursor: none; /* Hide the local cursor */
+        }
+
+        #error-display {
+            background-color: #f8f8ffcc;
+        }
+        #error-display.windows {
+            position: absolute;
+            top: 110px;
+            right: 20px;
+            
+            max-width: 50vw;
+            width: max-content;
+
+            max-height: calc(100vh - 150px);
+
+            border: 2px solid darkgrey;
+            border-radius: 8px;
+            padding: 5px;
+
+            overflow-y: auto;
+            box-shadow: 0 4px 13px #878787;
+        }
+        .error-code {
+            background-color: #ffc0cbbd;
+            color: darkred;
+            padding: 2px;
+            display: block;
+            
+            margin: 0; 
+        }
+
+        /* Error Entries */
+        .error-entry {
+            font-family: Consolas, monospace;
+            background-color: ghostwhite;
+            color: red;
+            
+            padding-left: 5px;    
+            padding-right: 5px;
+            
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            
+            margin: 3px;
+            box-shadow: 0 4px 6px #bababa;
+
+             border-radius: 8px;
+        }
+        .error-entry-description {
+            margin: 0;
+        }
+        .dismiss-error-button {
+            background-color: lightgrey;
+            border-radius: 0;
+            margin: 10px;
+            
+            border: none;
+            border-radius: 3px;
+            
+            align-self: flex-end;
+        }
+        .dismiss-error-button:hover {
+            cursor: pointer;
+            background-color: grey;
+        }
+        
+        /* Dismiss all error button */
+        .dismiss-all-error-button {
+            margin: 8px;
+            font-size: 15px;
+            
+            background-color: whitesmoke;
+            
+            border: 1px solid black; 
+            border-radius: 4px;
+        }
+        .dismiss-all-error-button:hover {
+            cursor: pointer;
+            background-color: lightgrey;
+        }
+
+        /*/* Toggle Error Display Button  */
+        #toggle-error-display {
+            position: absolute;
+            top:60px;
+            right:15px;
+            
+            color: red;
+            font-weight: bold;
+            font-size: 28px;
+            background-color: #ffc0cb88;
+            
+            height: 45px;
+            width: 45px;
+
+            border: 2px solid red;
+            border-radius: 22px;
+            
+        }
+        #toggle-error-display:hover {
+            background-color: #ffc0cbff;
+            cursor: pointer;
+        }
+
+        /* Loading bar */
+        #loading-display {
+            position: fixed;
+            top:50%;
+            left:50%;
+            transform: translate(-50%, -15vw);
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        
+            max-width: 40vw;
+        
+            font-family: arial, sans-serif;
+        }
+        #loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script src="./js/guacamole/ArrayBufferReader.js"></script>
+    <script src="./js/guacamole/ArrayBufferWriter.js"></script>
+    <script src="./js/guacamole/AudioContextFactory.js"></script>
+    <script src="./js/guacamole/AudioPlayer.js"></script>
+    <script src="./js/guacamole/AudioRecorder.js"></script>
+    <script src="./js/guacamole/BlobReader.js"></script>
+    <script src="./js/guacamole/BlobWriter.js"></script>
+    <script src="./js/guacamole/Client.js"></script>
+    <script src="./js/guacamole/DataURIReader.js"></script>
+    <script src="./js/guacamole/Display.js"></script>
+    <script src="./js/guacamole/Event.js"></script>
+    <script src="./js/guacamole/InputSink.js"></script>
+    <script src="./js/guacamole/InputStream.js"></script>
+    <script src="./js/guacamole/IntegerPool.js"></script>
+    <script src="./js/guacamole/JSONReader.js"></script>
+    <script src="./js/guacamole/Keyboard.js"></script>
+    <script src="./js/guacamole/Layer.js"></script>
+    <script src="./js/guacamole/Mouse.js"></script>
+    <script src="./js/guacamole/Namespace.js"></script>
+    <script src="./js/guacamole/Object.js"></script>
+    <script src="./js/guacamole/OnScreenKeyboard.js"></script>
+    <script src="./js/guacamole/OutputStream.js"></script>
+    <script src="./js/guacamole/Parser.js"></script>
+    <script src="./js/guacamole/Position.js"></script>
+    <script src="./js/guacamole/RawAudioFormat.js"></script>
+    <script src="./js/guacamole/SessionRecording.js"></script>
+    <script src="./js/guacamole/Status.js"></script>
+    <script src="./js/guacamole/StringReader.js"></script>
+    <script src="./js/guacamole/StringWriter.js"></script>
+    <script src="./js/guacamole/Touch.js"></script>
+    <script src="./js/guacamole/Tunnel.js"></script>
+    <script src="./js/guacamole/UTF8Parser.js"></script>
+    <script src="./js/guacamole/Version.js"></script>
+    <script src="./js/guacamole/VideoPlayer.js"></script>
+</head>
+<body>
+    <div id="display"></div>
+    <div id="output"></div>
+    <script src="./js/7lbd_guacd_client.js"></script>
+</body>
+</html>
