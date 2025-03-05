@@ -1,5 +1,6 @@
 ## 7-Layer Bean Dip 
 Windows Remote Desktops through Open OnDemand
+<img align="right" src="https://github.com/user-attachments/assets/343c6666-e3a0-4ce4-94ab-fc391e4f1b1f" width="250">
 
 **👉 [View our complete documentation in the Wiki](https://github.com/BYUHPC/7lbd/wiki)**
 
