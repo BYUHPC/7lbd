@@ -1,0 +1,1 @@
+Files in the 7lbd_test_scripts folder are used for testing connectivity to VNC and Guacamole.  [vm_test.sh](https://github.com/BYUHPC/7lbd/blob/main/7lbd_test_scripts/vm_test.sh) is used to [Boot Windows VM on cluster](https://github.com/BYUHPC/7lbd/wiki/Boot-Windows-VM-on-cluster)
