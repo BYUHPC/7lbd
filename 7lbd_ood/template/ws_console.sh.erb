@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Only proceed if ws_console is enabled
+if [[ $ws_console_enabled != "1" ]]; then
+        echo "WS_CONSOLE.SH: WebSocket console service not enabled"
+    exit 0
+fi
+
+# Check for required environment variables
+if [[ -z "${ws_console_fd}" ]]; then
+    echo "WS_CONSOLE.SH: Error - ws_console_fd is not set"
+    exit 1
+fi
+
+if [[ -z "${ws_console_port}" ]]; then
+    echo "WS_CONSOLE.SH: Error - ws_console_port is not set"
+    exit 1
+fi
+
+# Check if websockify is already in PATH
+if ! command -v websockify >/dev/null 2>&1; then
+    echo "WS_CONSOLE.SH: Loading required modules"
+    module load python/3.12 websockify
+    # Verify websockify was loaded successfully
+    if ! command -v websockify >/dev/null 2>&1; then
+        echo "WS_CONSOLE.SH: Failed to load websockify module"
+        exit 1
+    fi
+fi
+
+# Set up the websockify token file
+echo "${websockify_token}: unix:${JOB_TMP_DIR}/vnc.socket" > ${script_path}/websockify_token
+
+# Log configuration details
+echo "WS_CONSOLE: WebSockify FD: ${ws_console_fd}"
+echo "WS_CONSOLE: WebSockify PORT: ${ws_console_port}"
+echo "WS_CONSOLE: Websockify Token: ${websockify_token}"
+
+# Ensure socket permissions are secure
+chmod 700 ${JOB_TMP_DIR}/vnc.socket
+
+# Wait for the VNC socket to be created
+until [ -e "${JOB_TMP_DIR}/vnc.socket" ]; do
+    sleep .1
+done
+
+# Verify the socket
+if [ ! -S "${JOB_TMP_DIR}/vnc.socket" ]; then
+    echo "${JOB_TMP_DIR}/vnc.socket exists but is not a socket"
+    stat "${JOB_TMP_DIR}/vnc.socket"
+    exit 1
+fi
+
+# Launch websockify with the correct file descriptor
+websockify --token-plugin=TokenFile \
+          --token-source=${script_path}/websockify_token \
+          --inetd \
+          --unix-target=${JOB_TMP_DIR}/vnc.socket \
+          <&"${ws_console_fd}"

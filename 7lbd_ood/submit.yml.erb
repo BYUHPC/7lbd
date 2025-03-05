@@ -1,0 +1,35 @@
+<%-
+  #user = ENV["USER"]
+  #emailaddr = "#{user}@userfwd.rc.byu.edu"
+  emailcmd = '/usr/sbin/orc_email_file_lookup.pl ' + ENV["USER"]
+  emailaddr = %x[ #{emailcmd}]
+%>
+---
+batch_connect:
+  template: basic
+  conn_params:
+    - guacd_rdp_enabled
+    - guacd_rdp_port
+    - guacd_rdp_authtoken
+    - ws_console_enabled
+    - ws_console_port
+    - websockify_token
+    - win_user
+    - win_password
+    - tls_proxy_enabled
+    - job
+    - rdpport
+script:
+  email: <%= emailaddr %>
+  native:
+    - "-N"
+    - "1"
+    - "-n"
+    - "8"
+    - "--mem"
+    - "12G"
+    - "--qos=normal"
+    - "--reservation=ood_interactive,ood_interactive_m9,oodinteractive_m12"
+    - "--iso-netns-listeners"
+    - "3"
+    - "--oodproxy-register=1"

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# Wait for RDP, SMB, guacd ports, and port 54321 to be available
+echo "AFTER.SH: After script running:"
+start_time=$(date +%s)
+timeout=300  # Total timeout in seconds
+
+#this should exit at $timeout + a few seconds so it is alive longer than the loop
+timeout -k 5 $timeout nc -l 127.0.0.1 54321 >/dev/null &
+vm_ready_pid=$!
+
+while true; do
+    current_time=$(date +%s)
+    elapsed=$((current_time - start_time))
+    if [ $elapsed -ge $timeout ]; then
+        echo "AFTER.SH: Timed out waiting for Windows VM ports and readiness signal after ${timeout} seconds!"
+        clean_up 1
+    fi
+    rdp_up=false
+    smb_up=false
+    guacd_up=false
+    vm_ready=false
+    if wait_until_port_used "${host}:3389" 1 >/dev/null 2>&1; then
+        rdp_up=true
+    fi
+    if wait_until_port_used "${host}:445" 1 >/dev/null 2>&1; then
+        smb_up=true
+    fi
+    if wait_until_port_used "${host}:4822" 1 >/dev/null 2>&1; then
+        guacd_up=true
+    fi
+    if [[ "$vm_ready" != "true" ]]; then
+        #only do the kill -0 if the vm has not already been seen as ready
+	kill -0 "$vm_ready_pid" >/dev/null 2>&1 || vm_ready=true
+    fi
+
+    if $rdp_up && $smb_up && $guacd_up && $vm_ready; then
+        echo "AFTER.SH: All required services are up and VM signaled ready!"
+        break
+    fi
+    # Optional: Add status messages
+    if ! $rdp_up; then echo "AFTER.SH: Waiting for RDP port 3389..."; fi
+    if ! $smb_up; then echo "AFTER.SH: Waiting for SMB port 445..."; fi
+    if ! $guacd_up; then echo "AFTER.SH: Waiting for guacd port 4822..."; fi
+    if ! $vm_ready; then echo "AFTER.SH: Waiting for VM ready signal on port 54321..."; fi
+    sleep 2
+done

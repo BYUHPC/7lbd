@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+echo "SCRIPT.SH:  script running"
+
+# Change working directory to user's home directory
+cd "${HOME}"
+
+# Ensure that the user's configured login shell is used
+#export SHELL="$(getent passwd $USER | cut -d: -f7)"
+
+echo "SCRIPT.SH:  Starting VM..."
+qemu-img create -f qcow2 -b /apps/.vd/latest.qcow2 -F qcow2 ${JOB_TMP_DIR}/overlay_image.qcow2
+
+# Only run tlsproxy if tls_proxy_enabled is 1
+if [ "$tls_proxy_enabled" = "1" ]; then
+    $script_path/tlsproxy_start.sh $SPANK_ISO_NETNS_LISTENING_FD_2 127.0.0.1:3389 &
+fi
+
+$script_path/samba_start.sh
+
+# Only run guacd_rdp if guacd_rdp_enabled is 1
+if [ "$guacd_rdp_enabled" = "1" ]; then
+    $script_path/guacd_rdp.sh
+fi
+
+$script_path/smbios.sh
+
+# Only run ws_console if ws_console_enabled is 1
+if [ "$ws_console_enabled" = "1" ]; then
+    $script_path/ws_console.sh &
+fi
+echo "SCRIPT.SH:  Launching VM"
+
+# Launch QEMU
+/usr/libexec/qemu-kvm \
+    -name guest=${USER}_${job_uuid}_win11,debug-threads=on \
+    -machine pc-q35-rhel9.4.0 \
+    -smbios file=${script_path}/smbios_data.bin \
+    -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/ovmf/OVMF_CODE.fd \
+    -device ich9-ahci,id=sata_controller \
+    -drive file=${JOB_TMP_DIR}/overlay_image.qcow2,format=qcow2,if=none,id=drive0 \
+    -device ide-hd,drive=drive0,bus=sata_controller.0 \
+    -m 8G \
+    -cpu max \
+    -smp 5 \
+    -device virtio-net-pci,netdev=net0 \
+    -netdev user,id=net0,net=169.254.100.0/24,dhcpstart=169.254.100.15,host=169.254.100.2,hostfwd=tcp::3389-:3389 \
+    -boot c \
+    -vga none \
+    -device virtio-gpu-pci \
+    -vnc unix:${JOB_TMP_DIR}/vnc.socket,lossy=on,non-adaptive=on \
+    -rtc base=localtime \
+    -usb -device usb-tablet 

@@ -1,0 +1,116 @@
+<div style="margin-bottom: 4px;">Connect with:</div>
+<div sytle="display: flex; gap: 20px;" class="d-flex">
+<% if guacd_rdp_enabled ==1 %>
+<form action="/node/<%=host %>/<%=guacd_rdp_port %>/" method="get" target="_blank" style="margin-right: 20px;">
+        <input type="hidden" name="authtoken" value="<%= guacd_rdp_authtoken %>">
+        <button class="btn btn-primary me-4" type="submit">
+    <i class="fa fa-windows"></i> Web
+  </button>
+</form>
+<% end %>
+<% if ws_console_enabled == 1 %>
+<form action="/pun/sys/dashboard/noVNC-1.3.0/vnc.html" method="get" target="_blank">
+ <input type="hidden" name="autoconnect" value="true">
+ <input type="hidden" name="path" value="rnode/<%= host %>/<%= ws_console_port %>/websockify?token=<%= websockify_token %>">
+ <input type="hidden" name="resize" value="remote">
+ <button class="btn btn-primary" type="submit">
+   <i class="fa fa-wrench"></i> VM Console
+ </button>
+</form>
+<% end %>
+</div>
+<% if tls_proxy_enabled == 1 %>
+<div id="tlsProxySection">
+<hr/>
+<div style="margin-bottom: 4px;">Connect directly with RDP client (installation instructions):</div>
+<form id="rdpForm" action="/oodproxy/gen_remote_config.php" method="get" target="_blank">
+        <div class="d-flex align-items-center">
+            <button class="btn btn-primary" type="submit" style="margin-right: 20px;">
+                <i class="fa fa-external-link"></i> RDP
+            </button>
+            <div id="rdpClientSelectContainer" style="display: none;">
+                <select id="rdpClientSelect" class="form-select" style="width: auto; margin-right: 20px;">
+                    <option value="freerdp">FreeRDP</option>
+                    <option value="remmina">Remmina</option>
+                </select>
+            </div>
+            <input type="hidden" name="connect" value="<%= host %>:<%= rdpport %>" autocomplete="off">
+            <input type="hidden" name="job" value="<%= job %>" autocomplete="off">
+            <input type="hidden" name="pt" value="mtls" autocomplete="off">
+            <input type="hidden" name="username" value="<%= win_user %>" autocomplete="off">
+            <input type="hidden" name="password" value="<%= win_password %>" autocomplete="off">
+            <input type="hidden" name="proto" value="rdp" autocomplete="off">
+            <input type="hidden" name="program" value="freerdp" autocomplete="off" id="programInput">
+            <div>
+                <input type="checkbox" id="fullscreen" name="fullscreen" checked>
+                <label for="fullscreen">Fullscreen</label>
+            </div>
+        </div>
+</form>
+<script>
+// Function to detect operating system
+function getOperatingSystem() {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    if (userAgent.indexOf('linux') !== -1) return 'Linux';
+    if (userAgent.indexOf('mac') !== -1) return 'Mac';
+    if (userAgent.indexOf('win') !== -1) return 'Windows';
+    return 'Unknown';
+}
+
+// Function to update UI based on OS
+function updateUIForOS() {
+    const os = getOperatingSystem();
+    const rdpClientSelectContainer = document.getElementById('rdpClientSelectContainer');
+    const tlsProxySection = document.getElementById('tlsProxySection');
+    
+    if (!rdpClientSelectContainer || !tlsProxySection) return;
+
+    if (os === 'Mac') {
+        tlsProxySection.style.display = 'none';
+    } else {
+        tlsProxySection.style.display = 'block';
+        if (os === 'Linux') {
+            rdpClientSelectContainer.style.display = 'block';
+        } else {
+            rdpClientSelectContainer.style.display = 'none';
+        }
+    }
+}
+
+// Initialize event listener for select change
+function initializeSelectListener() {
+    const rdpClientSelect = document.getElementById('rdpClientSelect');
+    const programInput = document.getElementById('programInput');
+    
+    if (rdpClientSelect && programInput) {
+        rdpClientSelect.addEventListener('change', function() {
+            programInput.value = this.value;
+        });
+    }
+}
+
+// Set up MutationObserver to watch for changes
+const observer = new MutationObserver(function(mutations) {
+    updateUIForOS();
+    initializeSelectListener();
+});
+
+// Initial setup when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    updateUIForOS();
+    initializeSelectListener();
+    
+    // Start observing the document for changes
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+});
+
+// Cleanup observer when page is unloaded
+window.addEventListener('unload', function() {
+    observer.disconnect();
+});
+</script>
+</div>
+<% end %>

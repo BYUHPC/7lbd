@@ -1,0 +1,24 @@
+{
+    "type": "rdp",
+    "useCredentials": true,
+    "defaultWidth": 1920,
+    "defaultHeight": 1080,
+    "guacd": {
+        "port": 4822
+    },
+    "logLevel": "ERRORS",
+    "settings": {
+        "hostname": "localhost",
+        "port": 3389,
+        "enable-drive": false,
+        "create-drive-path": false,
+        "enable-wallpaper": false,
+        "enable-theming": false,
+        "enable-font-smoothing": false,
+        "enable-desktop-composition": false,
+        "enable-menu-animations": false,
+        "security": "any",
+        "ignore-cert": true,
+        "dpi": 96
+    }
+}

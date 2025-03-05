@@ -1,0 +1,24 @@
+---
+cluster: 
+ - "orc"
+form:
+  - bc_num_hours
+  - auto_queues
+  - bc_email_on_started
+
+
+attributes:
+
+  bc_num_hours:
+    min: 1
+    max: 168
+    help: |
+      This field specifies how many hours to reserve the cluster node for.  At the end of your reservation, your processes will be killed without notice.  It may be a good idea to ask for more time than you think you will need, but longer reservations may take more time to become available.
+  bc_email_on_started:
+    value: true
+    help: |
+      Reservations for large numbers of resources or for longer periods of time may take a while to become available.  Checking this box will allow us to send you an email when the resource becomes available.
+  auto_queues:
+    help: |
+      This controls where your job will run. Select "(auto)" unless you have a particular need.
+

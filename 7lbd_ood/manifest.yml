@@ -1,0 +1,9 @@
+---
+name: Windows Desktop 
+icon: fa://desktop
+category: Interactive Apps
+subcategory: Desktops
+role: batch_connect
+description: |
+  This app will launch an interactive Microsoft Windows desktop on a compute node. You will
+  have no internet access, but you will have access to your files.
