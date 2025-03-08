@@ -3,7 +3,7 @@
 echo "GUACD_RDP.SH:  Loading modules for guac..."
 #Create environment necessary for loading the guac container
 module load spack
-spack load apptainer
+spack load apptainer@1.3.2/2zcgvx6
 echo "GUACD_RDP.SH:  launching guacd:..."
 # Load in a while loop so if the container is killed, another one will start up
 ( while true; do apptainer run ${s7lbd_dir}/guacd_latest.sif; sleep 1; done ) &
