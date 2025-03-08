@@ -22,7 +22,7 @@ BEAN_DIP_DIR="../7lbd_apps"
 GUACD_CONTAINER="${BEAN_DIP_DIR}/guacd_latest.sif"
 # This should be the commands necessary to create an environment where you can run 
 # the guacd container.  Load modules, etc.  It needs to be a one-line bash script.
-CONTAINER_PREREQ="module load spack; spack load apptainer"
+CONTAINER_PREREQ="module load spack; spack load apptainer@1.3.2/2zcgvx6"
 # Location of the json file that tells the guacd connector where the guacd container is
 # and what settings to connect with.  
 GUACD_CONNECTOR_JSON="../7lbd_ood/template/guacd_rdp.json"
