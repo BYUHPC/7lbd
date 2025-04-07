@@ -1,5 +1,5 @@
 <div style="margin-bottom: 4px;">Connect with:</div>
-<div sytle="display: flex; gap: 20px;" class="d-flex">
+<div style="display: flex; gap: 20px;" class="d-flex">
 <% if guacd_rdp_enabled ==1 %>
 <form action="/node/<%=host %>/<%=guacd_rdp_port %>/" method="get" target="_blank" style="margin-right: 20px;">
         <input type="hidden" name="authtoken" value="<%= guacd_rdp_authtoken %>">
